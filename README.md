@@ -31,3 +31,11 @@ cbfstool firmware.rom remove -n fallback/payload
 cbfstool firmware.rom add -f vgabios.bin -n seavgabios.bin -t raw -r COREBOOT
 cbfstool firmware.rom add-payload -f bios.bin.elf -n fallback/payload
 ```
+
+# Flashing a new firmware
+
+Flashing can be done from a running GNU/Linux using flashrom 1.1:
+
+```
+flashrom -pinternal --fmap -i COREBOOT -w firmware.rom
+``` 
