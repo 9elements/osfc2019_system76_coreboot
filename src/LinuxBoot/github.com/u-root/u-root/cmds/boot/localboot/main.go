@@ -29,6 +29,7 @@ var (
 	flagInitramfsPath  = flag.String("initramfs", "", "Specify the path of the initramfs to load. If using -grub, this argument is ignored")
 	flagKernelCmdline  = flag.String("cmdline", "", "Specify the kernel command line. If using -grub, this argument is ignored")
 	flagDeviceGUID     = flag.String("guid", "", "GUID of the device where the kernel (and optionally initramfs) are located. Ignored if -grub is set or if -kernel is not specified")
+	flagSilent         = flag.Bool("s", false, "silent")
 )
 
 var debug = func(string, ...interface{}) {}
@@ -154,6 +155,8 @@ func BootGrubMode(devices []storage.BlockDev, baseMountpoint string, guid string
 		return nil
 	}
 
+	os.Stdout,_ = os.Open("/dev/stdout")
+
 	// try to kexec into every boot config kernel until one succeeds
 	for _, cfg := range bootconfigs {
 		debug("Trying boot configuration %+v", cfg)
@@ -217,6 +220,9 @@ func main() {
 	}
 	if *flagDebug {
 		debug = log.Printf
+	}
+	if *flagSilent {
+		os.Stdout,_ = os.Open(os.DevNull)
 	}
 
 	// Get all the available block devices

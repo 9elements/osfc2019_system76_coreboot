@@ -7,7 +7,6 @@ package main
 import (
 	"flag"
 	"log"
-	"os"
 	"os/exec"
 	"os/signal"
 	"time"
@@ -29,15 +28,6 @@ var defaultBootsequence = [][]string{
 
 func main() {
 	flag.Parse()
-
-	log.Print(`
-                     ____            _                 _                 _   
-                    / ___| _   _ ___| |_ ___ _ __ ___ | |__   ___   ___ | |_ 
-                    \___ \| | | / __| __/ _ \ '_ ` + "`" + ` _ \| '_ \ / _ \ / _ \| __|
-                     ___) | |_| \__ \ ||  __/ | | | | | |_) | (_) | (_) | |_ 
-                    |____/ \__, |___/\__\___|_| |_| |_|_.__/ \___/ \___/ \__|
-                           |___/
-`)
 
 	sleepInterval := time.Duration(*interval) * time.Second
 
@@ -76,11 +66,13 @@ func main() {
 			for _, bootcmd := range defaultBootsequence {
 				if !*doQuiet {
 					bootcmd = append(bootcmd, "-d")
+				} else {
+					bootcmd = append(bootcmd, "-s")
 				}
 				log.Printf("Running boot command: %v", bootcmd)
 				cmd := exec.Command(bootcmd[0], bootcmd[1:]...)
-				cmd.Stdout = os.Stdout
-				cmd.Stderr = os.Stderr
+				// cmd.Stdout = os.Stdout
+				// cmd.Stderr = os.Stderr
 				if err := cmd.Run(); err != nil {
 					log.Printf("Error executing %v: %v", cmd, err)
 				}
